@@ -1,0 +1,23 @@
+*, ::before, ::after{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.container{
+    display:grid; 
+    grid-template-rows: repeat(22, 40px);
+    grid-template-columns: repeat(19, 40px);
+    text-align: center;
+}
+.mur{
+    background-image: url(/img/mur.gif);
+}
+.sol{
+    background-image: url(/img/sol.gif);
+}
+.bonbon{
+    background-image: url(/img/bonbon.gif);
+}
+.pacman{
+    background-image: url(/img/pacman.gif);
+}
