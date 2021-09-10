@@ -9,9 +9,9 @@ let grille = [
     [0, 2, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 2, 0],
     [0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0],
     [0, 1, 1, 0, 2, 0, 2, 2, 2, 2, 2, 2, 2, 0, 2, 0, 1, 1, 0],
-    [0, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0, 0, 2, 0, 2, 0, 0, 0, 0],
-    [0, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 0],
-    [0, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0, 0, 2, 0, 2, 0, 0, 0, 0],
+    [0, 0, 0, 0, 2, 0, 2, 0, 0, 1, 0, 0, 2, 0, 2, 0, 0, 0, 0],
+    [0, 2, 2, 2, 2, 2, 2, 0, 1, 1, 1, 0, 2, 2, 2, 2, 2, 2, 0],
+    [0, 0, 0, 0, 2, 0, 2, 0, 0, 1, 0, 0, 2, 0, 2, 0, 0, 0, 0],
     [0, 1, 1, 0, 2, 0, 2, 2, 2, 2, 2, 2, 2, 0, 2, 0, 1, 1, 0],
     [0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0],
     [0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0],
@@ -20,41 +20,52 @@ let grille = [
     [0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0],
     [0, 2, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 2, 0],
     [0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0],
-    [0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0],
+    [0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ];
 
-let fontomeRouge = {
-    x: 9,
-    y: 11,
-    direction: 0
-}
-let fontomVert = {
-    x: 7,
-    y: 11,
-    direction: 0
-}
-let fontomeOrange = {
-    x: 7,
-    y: 12,
-    direction: 0
-}
-
+let tabfantomes = [
+    fontomeRouge = {
+        x: 9,
+        y: 11,
+        direction: 0
+    },
+    fontomVert = {
+        x: 10,
+        y: 10,
+        direction: 0
+    },
+    fontomeOrange = {
+        x: 10,
+        y: 12,
+        direction: 0
+    },
+    fontomeBleu = {
+        x: 11,
+        y: 11,
+        direction: 0
+    }
+]
 let pacman = {
-    x: 1,
+    x: 2,
     y: 2,
     direction: 0
 }
+
+setInterval(tourDeJeu, 300)
+
 function tourDeJeu() {
     affichePlateau()
     deplacerPackman()
     collisionPackman()
     affichePackman()
-    collisionPackman()
     mangerBonbon()
-    afficheFontome1()
-    afficheFontome2()
-    afficheFontome3()
+    deplacementFontomes()
+    collisionFantomes()
+
+    afficheFontomes()
+    // collisionPacmanEtFantome()
+
     afficherScore()
 }
 
@@ -82,22 +93,21 @@ function affichePlateau() {
     }
 }
 
-setInterval(tourDeJeu, 500)
 
 document.body.addEventListener("keyup", touches)
 function touches(event) {
     console.log(event)
     if (event.key == "ArrowRight") {
-        pacman.direction = 0
+        pacman.direction = "droite"
     }
     if (event.key == "ArrowDown") {
-        pacman.direction = 1
+        pacman.direction = "bas"
     }
     if (event.key == "ArrowLeft") {
-        pacman.direction = 2
+        pacman.direction = "gauche"
     }
     if (event.key == "ArrowUp") {
-        pacman.direction = 3
+        pacman.direction = "haut"
     }
 }
 
@@ -109,7 +119,130 @@ function affichePackman() {
     plateau.appendChild(monPacman);
 }
 
-function afficheFontome1() {
+function afficheFontomes() {
+    for (let i in tabfantomes) {
+        let mesFantomes = document.createElement("div");
+        if (i == 0) {
+            mesFantomes.className = "fontomeRouge"
+        }
+        if (i == 1) {
+            mesFantomes.className = "fontomeVert"
+        }
+        if (i == 2) {
+            mesFantomes.className = "fontomeOrange"
+        }
+        if (i == 3) {
+            mesFantomes.className = "fontomeBleu"
+        }
+        mesFantomes.style.gridArea = tabfantomes[i].y + " / " + tabfantomes[i].x
+        plateau.appendChild(mesFantomes);
+
+
+    }
+
+}
+
+function deplacerPackman() {
+    if (pacman.direction == "droite") {
+        pacman.x++
+    }
+    if (pacman.direction == "bas") {
+        pacman.y++
+    }
+    if (pacman.direction == "gauche") {
+        pacman.x--
+    }
+    if (pacman.direction == "haut") {
+        pacman.y--
+    }
+}
+
+function deplacementFontomes() {
+    for (let i in tabfantomes) {
+        let newDir = Math.round((Math.random() * 4) % 4)
+        tabfantomes[i].direction = newDir
+        if (tabfantomes[i].direction == 0) {
+            tabfantomes[i].x++
+        }
+        if (tabfantomes[i].direction == 1) {
+            tabfantomes[i].y++
+        }
+        if (tabfantomes[i].direction == 2) {
+            tabfantomes[i].x--
+        }
+        if (tabfantomes[i].direction == 3) {
+            tabfantomes[i].y--
+        }
+
+
+    }
+}
+
+function collisionFantomes() {
+    for (let i in tabfantomes) {
+        if (grille[tabfantomes[i].y - 1][tabfantomes[i].x - 1] == 0) {
+            if (tabfantomes[i].direction == 0) {
+                tabfantomes[i].x--
+            }
+            if (tabfantomes[i].direction == 1) {
+                tabfantomes[i].y--
+            }
+            if (tabfantomes[i].direction == 2) {
+                tabfantomes[i].x++
+            }
+            if (tabfantomes[i].direction == 3) {
+                tabfantomes[i].y++
+            }
+        }
+    }
+}
+
+function collisionPacmanEtFantome() {
+    for (let i in grille) {
+        
+    }
+}
+function collisionPackman() {
+    if (grille[pacman.y - 1][pacman.x - 1] == 0) {
+        if (pacman.direction == "droite") {
+            pacman.x--
+        }
+        if (pacman.direction == "bas") {
+            pacman.y--
+        }
+        if (pacman.direction == "gauche") {
+            pacman.x++
+        }
+        if (pacman.direction == "haut") {
+            pacman.y++
+        }
+    }
+}
+
+
+
+function mangerBonbon() {
+    if (grille[pacman.y - 1][pacman.x - 1] == 2) {
+        grille[pacman.y - 1][pacman.x - 1] = 1
+        score += 10
+    }
+}
+function afficherScore() {
+    let divScore = document.querySelector('.score');
+    divScore.innerHTML = "score" + score;
+    for (let i in score) {
+
+        if (grille[score[i]] == 0) {
+            alert("Vous avez terminé le jeu")
+        } else if (grille[score[i]] == 0) {
+            clearInterval
+        }
+
+    }
+
+}
+
+/*function afficheFontome1() {
     let fontome1 = document.createElement("div")
     fontome1.className = "fontomeRouge"
 
@@ -133,57 +266,14 @@ function afficheFontome3() {
     plateau.appendChild(fontome3);
 }
 
-function deplacerPackman() {
-    if (pacman.direction == 0) {
-        pacman.x++
-    }
-    if (pacman.direction == 1) {
-        pacman.y++
-    }
-    if (pacman.direction == 2) {
-        pacman.x--
-    }
-    if (pacman.direction == 3) {
-        pacman.y--
-    }
-}
+function afficheFontome4() {
+    let fontome4 = document.createElement("div")
+    fontome4.className = "fontomeBleu"
 
-function collisionPackman() {
-    if (grille[pacman.y - 1][pacman.x - 1] == 0) {
-        if (pacman.direction == 0) {
-            pacman.x--
-        }
-        if (pacman.direction == 1) {
-            pacman.y--
-        }
-        if (pacman.direction == 2) {
-            pacman.x++
-        }
-        if (pacman.direction == 3) {
-            pacman.y++
-        }
-    }
-}
+    fontome4.style.gridArea = fontomeBleu.y + " / " + fontomeBleu.x
+    plateau.appendChild(fontome4);
+}*/
 
-function mangerBonbon() {
-    if (grille[pacman.y - 1][pacman.x - 1] == 2) {
-        grille[pacman.y - 1][pacman.x - 1] = 1
-        score+=10
-    }
-}
-
-function afficherScore(){
-    let divScore = document.querySelector('.score');
-    divScore.innerHTML="score"+score;
-    if (score>=100){
-        alert("Vous avez terminé le jeu")
-    }else if(score>=100){
-        clearInterval
-    }
-
-}
-
-//score pour gagné est de 1930
 
 
 
